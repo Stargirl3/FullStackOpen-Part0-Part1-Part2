@@ -13,7 +13,7 @@ const Button = ({ handleClick, text }) => (
 )
 
 //component that renders the feedback results
-const MainStatistics = ({ feedback, text }) => <p>{text} {feedback}</p>
+const Statistics = ({ feedback, text }) => <p>{text} {feedback}</p>
 
 
 //main App component
@@ -26,6 +26,18 @@ const App = () => {
   const heading1 = 'give feedback'
   const heading2 = 'statistics'
 
+  const totalFeedback = () => good + neutral + bad
+
+  const averageScore = () => {
+    if (totalFeedback() === 0) return 0
+    else return ((good * 1) + (neutral * 0) + (bad * -1)) / totalFeedback()
+  }
+
+  const percentOfGoodFeedback = () => {
+    if (totalFeedback() === 0) return 0
+    else return (good / totalFeedback()) * 100
+  }
+
   return (
     <div>
       <Display title={heading1} />
@@ -33,9 +45,12 @@ const App = () => {
       <Button handleClick={() => setNeutral(neutral + 1)} text='neutral' />
       <Button handleClick={() => setBad(bad + 1)} text='bad' />
       <Display title={heading2} />
-      <MainStatistics feedback={good} text='good' />
-      <MainStatistics feedback={neutral} text='neutral' />
-      <MainStatistics feedback={bad} text='bad' />
+      <Statistics feedback={good} text='good' />
+      <Statistics feedback={neutral} text='neutral' />
+      <Statistics feedback={bad} text='bad' />
+      <Statistics feedback={totalFeedback()} text='all' />
+      <Statistics feedback={averageScore()} text='average' />
+      <Statistics feedback={percentOfGoodFeedback() + '%'} text='positive' />
     </div>
   )
 }
