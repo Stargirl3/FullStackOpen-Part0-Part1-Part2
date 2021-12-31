@@ -12,8 +12,17 @@ const Button = ({ handleClick, text }) => (
   </button>
 )
 
-//component that renders the feedback results
-const Statistics = ({ feedback, text }) => <p>{text} {feedback}</p>
+//returns a message that no feedback has yet to be given
+const NoStatistics = ({ text, counter }) => {
+  if (counter === 0) return <p>{text}</p>
+  else return null
+}
+
+//component that renders the feedback results, if feedback has been given
+const Statistics = ({ feedback, text, counter }) => {
+  if (counter !== 0) return <p>{text} {feedback}</p>
+  else return null
+}
 
 
 //main App component
@@ -26,17 +35,17 @@ const App = () => {
   const heading1 = 'give feedback'
   const heading2 = 'statistics'
 
+  //calculates the total amount of feedback given
   const totalFeedback = () => good + neutral + bad
 
-  const averageScore = () => {
-    if (totalFeedback() === 0) return 0
-    else return ((good * 1) + (neutral * 0) + (bad * -1)) / totalFeedback()
-  }
+  //calculates the average score from the total amount of feedback
+  // in the range of 1 to -1
+  const averageScore = () => ((good * 1) + (neutral * 0) + (bad * -1)) / totalFeedback()
 
-  const percentOfGoodFeedback = () => {
-    if (totalFeedback() === 0) return 0
-    else return (good / totalFeedback()) * 100
-  }
+
+  //calculates the percent of positive feedback given
+  const percentOfGoodFeedback = () => (good / totalFeedback()) * 100
+
 
   return (
     <div>
@@ -45,12 +54,13 @@ const App = () => {
       <Button handleClick={() => setNeutral(neutral + 1)} text='neutral' />
       <Button handleClick={() => setBad(bad + 1)} text='bad' />
       <Display title={heading2} />
-      <Statistics feedback={good} text='good' />
-      <Statistics feedback={neutral} text='neutral' />
-      <Statistics feedback={bad} text='bad' />
-      <Statistics feedback={totalFeedback()} text='all' />
-      <Statistics feedback={averageScore()} text='average' />
-      <Statistics feedback={percentOfGoodFeedback() + '%'} text='positive' />
+      <NoStatistics text='No feedback given' counter={totalFeedback()} />
+      <Statistics feedback={good} text='good' counter={totalFeedback()} />
+      <Statistics feedback={neutral} text='neutral' counter={totalFeedback()} />
+      <Statistics feedback={bad} text='bad' counter={totalFeedback()} />
+      <Statistics feedback={totalFeedback()} text='all' counter={totalFeedback()} />
+      <Statistics feedback={averageScore()} text='average' counter={totalFeedback()} />
+      <Statistics feedback={percentOfGoodFeedback() + '%'} text='positive' counter={totalFeedback()} />
     </div>
   )
 }
