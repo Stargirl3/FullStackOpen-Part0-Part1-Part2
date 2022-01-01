@@ -20,8 +20,15 @@ const NoStatistics = ({ text, counter }) => {
 
 //component that renders the feedback results, if feedback has been given
 const StatisticLine = ({ feedback, text, counter }) => {
-  if (counter !== 0) return <p>{text} {feedback}</p>
-  else return null
+  if (counter !== 0)
+    return (
+      <tr>
+        <th>{text}</th>
+        <td>{feedback}</td>
+      </tr>
+    )
+  else
+    return null
 }
 
 
@@ -55,12 +62,16 @@ const App = () => {
       <Button handleClick={() => setBad(bad + 1)} text='bad' />
       <Display title={heading2} />
       <NoStatistics text='No feedback given' counter={totalFeedback()} />
-      <StatisticLine feedback={good} text='good' counter={totalFeedback()} />
-      <StatisticLine feedback={neutral} text='neutral' counter={totalFeedback()} />
-      <StatisticLine feedback={bad} text='bad' counter={totalFeedback()} />
-      <StatisticLine feedback={totalFeedback()} text='all' counter={totalFeedback()} />
-      <StatisticLine feedback={averageScore()} text='average' counter={totalFeedback()} />
-      <StatisticLine feedback={percentOfGoodFeedback() + '%'} text='positive' counter={totalFeedback()} />
+      <table>
+        <tbody>
+          <StatisticLine feedback={good} text='good' counter={totalFeedback()} />
+          <StatisticLine feedback={neutral} text='neutral' counter={totalFeedback()} />
+          <StatisticLine feedback={bad} text='bad' counter={totalFeedback()} />
+          <StatisticLine feedback={totalFeedback()} text='all' counter={totalFeedback()} />
+          <StatisticLine feedback={averageScore()} text='average' counter={totalFeedback()} />
+          <StatisticLine feedback={percentOfGoodFeedback() + '%'} text='positive' counter={totalFeedback()} />
+        </tbody>
+      </table>
     </div>
   )
 }
