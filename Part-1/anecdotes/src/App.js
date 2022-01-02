@@ -1,12 +1,45 @@
 import React, { useState } from 'react'
 
-const Button = (props) => (
-  <button onClick={props.handleClick}>
-    {props.text}
+//displays headings
+const DisplayTitle = ({ title }) => <h1>{title}</h1>
+
+//displays the random anecdote
+const DisplayQuote = ({ quote }) => <p>"{quote}"</p>
+
+//displays most voted anecdote after the first vote has been cast
+const DisplayMostVotedQuote = ({ quote, votesOfQuote }) => {
+  if (votesOfQuote > 1) {
+    return (
+      <>
+        <p>"{quote}" </p>
+        <p> with {votesOfQuote} votes </p>
+      </>
+    )
+  } else if (votesOfQuote === '1') {
+    return (
+      <>
+        <p>"{quote}" </p>
+        <p> with {votesOfQuote} vote</p>
+      </>
+    )
+  } else return <p>No votes</p>
+}
+
+//displays buttons, their text and executes a function onClick
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>
+    {text}
   </button>
 )
 
+//main app
 const App = () => {
+
+  //page headings
+  const heading1 = 'Anecdote Of The Day'
+  const heading2 = 'Most Voted Anecdote'
+
+  //array with anecdotes
   const anecdotes = [
     'If it hurts, do it more often',
     'Adding manpower to a late software project makes it later!',
@@ -17,7 +50,10 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients'
   ]
 
+  //the current index of the anecdotes array 
   const [selected, setSelected] = useState(0)
+
+  //the keys are the indexes of each quote of the anecdotes array and the values are their corresponding votes
   const [votes, setVotes] = useState({
     0: 0,
     1: 0,
@@ -28,31 +64,50 @@ const App = () => {
     6: 0
   })
 
+  //they key indicates the index of the most voted quote and the value corresponds to the number of votes the quote has
+  const [mostVotes, setMostVotes] = useState({
+    0: 0
+  })
+
+  //updates the votes object with every new vote cast and updates the mostVotes object with the most voted anecdote
   const handleVote = () => {
     const updatedVotes = {
       ...votes,
       [selected]: votes[selected] + 1
     }
+
     setVotes(updatedVotes)
-    console.log(updatedVotes)
+
+
+    if (updatedVotes[selected] > Object.values(mostVotes).toString()) {
+      const mostVotedAnecdote = {
+        [selected]: updatedVotes[selected]
+      }
+      setMostVotes(mostVotedAnecdote)
+    }
   }
 
+  //generates a random index for the anecdotes array each time the user presses 'next anecdote'
   const newRandomIndex = () => setSelected(Math.floor(Math.random() * anecdotes.length))
+
+
 
 
   return (
     <div>
-      <p>"{anecdotes[selected]}"</p>
+      <DisplayTitle title={heading1} />
+      <DisplayQuote quote={anecdotes[selected]} />
       <Button
         handleClick={handleVote}
         text='vote'
       />
-      <Button 
-        handleClick={newRandomIndex} 
+      <Button
+        handleClick={newRandomIndex}
         text='next anecdote'
       />
-     
-     
+      <DisplayTitle title={heading2} />
+      <DisplayMostVotedQuote quote={anecdotes[Object.keys(mostVotes)]} votesOfQuote={Object.values(mostVotes).toString()} />
+
     </div>
   )
 }
