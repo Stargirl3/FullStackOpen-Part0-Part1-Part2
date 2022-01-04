@@ -65,9 +65,7 @@ const App = () => {
   })
 
   //they key indicates the index of the most voted quote and the value corresponds to the number of votes the quote has
-  const [mostVotes, setMostVotes] = useState({
-    0: 0
-  })
+  const [mostVotes, setMostVotes] = useState({})
 
   //updates the votes object with every new vote cast and updates the mostVotes object with the most voted anecdote
   const handleVote = () => {
@@ -106,7 +104,7 @@ const App = () => {
         text='next anecdote'
       />
       <DisplayTitle title={heading2} />
-      <DisplayMostVotedQuote quote={anecdotes[Object.keys(mostVotes)]} votesOfQuote={Object.values(mostVotes).toString()} />
+      <DisplayMostVotedQuote quote={anecdotes[Object.keys(mostVotes).toString()]} votesOfQuote={Object.values(mostVotes).toString()} />
 
     </div>
   )
