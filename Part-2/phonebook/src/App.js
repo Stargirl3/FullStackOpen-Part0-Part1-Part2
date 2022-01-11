@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 
-const Person = (props) => {
+const Person = ({ person }) => {
   return (
-    <div>{props.person.name}</div>
+    <div>{person.name}</div>
   )
 }
-
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -13,19 +12,23 @@ const App = () => {
   ]) 
   const [newName, setNewName] = useState('')
 
+  /* checks if the new name already exists in the phonebook and if it does it issues a warning and doesn't add it. Otherwise, it adds it to the phonebook*/
   const addPerson = (event) => {
     event.preventDefault()
-    const personObject = {
-      name: newName
+    console.log(persons);
+    
+    const nameExists = (person) => person.name === newName
+    if (persons.some(nameExists)) alert(`${newName} is already added to the phonebook`)
+    else {
+      const personObject = {
+        name: newName
+      }
+      setPersons(persons.concat(personObject))
     }
-    setPersons(persons.concat(personObject))
-    setNewName('')
+    setNewName('')    
   }
 
-  const handleNameChange = (event) => {
-      setNewName(event.target.value)
-  }
-
+  const handleNameChange = (event) => setNewName(event.target.value)
 
   return (
     <>
