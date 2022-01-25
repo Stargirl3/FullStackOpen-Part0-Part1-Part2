@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
 
 /*Renders a search box on the page and handles the event which filters the list of contacts to match the string being searched*/
@@ -50,18 +51,26 @@ const PersonForm = (props) => (
 //Main App
 const App = () => {
 
+
   /* pieces of State for setting the updated list of contacts, adding a new name and number, searching for a name, and showing the entire phonebook or not*/
-  const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '39-44-5323523', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [stringToFind, setStringToFind] = useState('')
   const [showAll, setShowAll] = useState(true)
 
+
+
+  /*fetch data from json-server using the 'axios' library and 'useEffect' hook*/
+  useEffect(() => {
+    console.log('effect')
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })  
+  }, [])
 
 
 
@@ -82,6 +91,7 @@ const App = () => {
       }
       setPersons(persons.concat(personObject))
     }
+    
     setNewName('')
     setNewNumber('')
   }
@@ -94,6 +104,8 @@ const App = () => {
   //sets new number
   const handleNumberChange = (event) => setNewNumber(event.target.value)
 
+
+
   /* sets the string being typed, as 'stringToFind', after it converts it to lowercase. If the search box is empty it sets 'showAll' as TRUE. Otherwise, if someone is currently searching for a name, it sets it as FALSE*/
   const handleSearchChange = (event) => {
     setStringToFind(event.target.value.toLowerCase())
@@ -104,7 +116,6 @@ const App = () => {
 
 
 
-
   /*If showAll === TRUE it shows the entire phonebook, otherwise it shows a new array that only contains contacts whose name contains the string being currently searched */
   const personsToShow = showAll
     ? persons
@@ -112,7 +123,6 @@ const App = () => {
       if (person.name.toLowerCase().indexOf(stringToFind) !== -1) return true
       else return false
     })
-
 
 
 
