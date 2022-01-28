@@ -1,9 +1,9 @@
 import ReactDOM from 'react-dom'
 import App from './App.js'
 
-const persons = [{}]
+//const persons = [{}]
 
 ReactDOM.render(
-  <App persons={persons} />,
+  <App />,
   document.getElementById('root')
 )

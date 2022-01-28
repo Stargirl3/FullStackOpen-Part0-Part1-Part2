@@ -14,13 +14,19 @@ const Filter = ({ handleSearchChange }) => (
 
 
 //Renders the contacts in the phonebok
-const Persons = ({ persons }) => (
+const Persons = ({ persons })  => (
   <div>
-    {persons.map(person =>
-      <div key={person.id}>{person.name}, {person.number}</div>
+    {persons.map( person =>
+      <Person key={person.id} person={person} />
     )}
   </div>
 )
+
+
+const Person = ({ person }) => (
+  <div>{person.name}, {person.number}</div>
+)
+
 
 
 //Renders form for adding a new contact to phonebook and handles new additions to the list
@@ -91,7 +97,7 @@ const App = () => {
       }
       setPersons(persons.concat(personObject))
     }
-    
+
     setNewName('')
     setNewNumber('')
   }
@@ -124,7 +130,8 @@ const App = () => {
       else return false
     })
 
-
+  
+  console.log(persons);
 
 
   return (
