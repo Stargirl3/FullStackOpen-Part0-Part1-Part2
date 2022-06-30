@@ -11,21 +11,24 @@ const App = () => {
   const [countries, setCountries] = useState([])
   const [countrySearch, setCountrySearch] = useState('')
   const [showNone, setShowNone] = useState(true)
-  const [countryToShow, setCountryToShow] = useState ({})
+  const [countryToShow, setCountryToShow] = useState({})
   const [showCountryInfo, setShowCountryInfo] = useState(true)
   const none = []
   const noShow = {}
-  
+  const api_key = process.env.REACT_APP_API_KEY
+  const [ countryWeather, setCountryWeather ] = useState({})
+
   //fetches data from serves using the 'axios'-library and 'useEffect' hook
   useEffect(() => {
-    console.log('effect')
+    console.log('(country data) effect')
     axios
       .get('https://restcountries.com/v3.1/all')
       .then(response => {
-        console.log('promise fulfilled')
+        console.log('(country data) promise fulfilled')
         setCountries(response.data)
       })
   }, [])
+
 
   // Updates 'countrySearch' with the string being searched and sets 'showNone' to 'true' if the search box is empty or 'false' if something is being typed. Also, sets the object 'countryToShow' as empty, so that if a useer starts a new search, the country info he was viewing after clicking the button that reveals that information, disappears.
   const handleSearch = (event) => {
@@ -53,11 +56,26 @@ const App = () => {
     : noShow
 
 
+  //everytime a country is clicked, function fetches weather data for that country and stores it in 'countryWeather'
+  useEffect(() => {
+    console.log('(weather) effect');  
+    if (Object.keys(countryClicked).length !== 0) { 
+      axios
+        .get(`https://api.openweathermap.org/data/2.5/weather?lat=${countryClicked.latlng[0]}&lon=${countryClicked.latlng[1]}&appid=${api_key}`)
+        .then(response => {
+          console.log('(weather) promise fulfilled')
+          setCountryWeather(response.data)        
+        })
+    }  
+  }, [countryClicked])
+
+
+  
   return (
     <>
       <SearchForCountry value={countrySearch} handleSearch={handleSearch} />
       <br />
-      <Countries countries={countriesToShow} handleClick={handleClick} countryClicked={countryClicked} />   
+      <Countries countries={countriesToShow} handleClick={handleClick} countryClicked={countryClicked} countryWeather={countryWeather} />   
     </>
   )
 

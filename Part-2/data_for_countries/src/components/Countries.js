@@ -2,10 +2,10 @@ import React from 'react'
 import DisplayCountryInfo from './DisplayCountryInfo'
 
 
-const Countries = ({ countries, handleClick, countryClicked }) => {
+const Countries = ({ countries, handleClick, countryClicked, countryWeather}) => {
     if (countries.length <= 10) { 
         if (countries.length === 1) return (
-            <DisplayCountryInfo country={countries[0]} /> 
+            <DisplayCountryInfo country={countries[0]} countryWeather={countryWeather} /> 
             )
         else return (
             <>
@@ -18,7 +18,7 @@ const Countries = ({ countries, handleClick, countryClicked }) => {
                     )} 
                 </div>
                 <div>
-                    <DisplayCountryInfo country={countryClicked} />
+                    <DisplayCountryInfo country={countryClicked} countryWeather={countryWeather} />
                 </div>
             </>
         )
