@@ -3,6 +3,7 @@ import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import personService from './services/persons'
+import axios from 'axios'
 
 
 const App = () => {
@@ -28,14 +29,31 @@ const App = () => {
 
 
 
-  /* checks if the new name and number already exist in the phonebook and if they do it issues a warning and doesn't add them. Otherwise, they get added to the phonebook, alog with a new ID*/
+  /* checks if the new name and that number already exist in the phonebook and if they do it alert the user. If the name exists but the number is different, it asks the user if they'd like to replace the old number and if they agree it uses axios PUT to update the user. Else, if both name and number are new, a new contact gets added to the phonebook*/
   const addPerson = (event) => {
     event.preventDefault()
     const nameExists = (person) => person.name === newName
     const numberExists = (person) => person.number === newNumber
 
-    if (persons.some(nameExists)) alert(`${newName} is already in the phonebook`)
+    if (persons.some(nameExists) && persons.some(numberExists)) alert(`This name and number are already in the phonebook.`)
+    
     else if (persons.some(numberExists)) alert(`The number: ${newNumber} is already in the phonebook`)
+    
+    else if (persons.some(nameExists) && !persons.some(numberExists)) {
+      window.confirm(`${newName} is already in the phonebook. Replace old number with new number?`)
+      
+      const personToChange = persons.find(p => p.name === newName)      
+      const changedPerson = {...personToChange, number: newNumber}
+      
+      personService
+        .update(changedPerson.id, changedPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => 
+            person.name !== newName 
+            ? person 
+            : returnedPerson))
+        })
+    }
     else {
       const personObject = {
         name: newName,
@@ -80,9 +98,7 @@ const App = () => {
 
   /* gets triggered when a user clicks the 'delete' button visible afetr each phonebook entry. First it locates the entry clicked, opens a window to confirm if the entry should be deleted and once confirmed, deletes the entry and renders the updated phonebook, both using axios*/
   const deleteEntryOf = (id) => {
-    const person = persons.find(p =>
-      p.id == id
-    )
+    const person = persons.find(p => p.id == id)
 
     if (window.confirm(`Delete ${person.name}?`)) {
       personService
@@ -91,10 +107,8 @@ const App = () => {
       personService
         .getAll()
         .then(initialPersons => {
-          const updatedPersons = initialPersons.map(person => person)
-          setPersons(updatedPersons)
-          console.log(`After DELETE there are ${updatedPersons.length} people in the phonebook`);
-
+          setPersons(initialPersons.filter(p => p.id !== id))
+          console.log('success')
         })
     }
   }

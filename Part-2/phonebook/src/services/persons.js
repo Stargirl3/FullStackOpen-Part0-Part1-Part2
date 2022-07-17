@@ -11,9 +11,14 @@ const create = newObject => {
     return request.then(response => response.data)
 }
 
+const update = (id, newObject) => {
+    const request = axios.put(`${baseUrl}/${id}`, newObject)
+    return request.then(response => response.data)
+}
+
 const deleteEntry = (person, { id }) => {
     const request = axios.delete(baseUrl + '/' + id, person)
     return request.then(console.log(`${person.name} was deleted`))
 }
 
-export default { getAll, create, deleteEntry }
+export default { getAll, create, update, deleteEntry }
