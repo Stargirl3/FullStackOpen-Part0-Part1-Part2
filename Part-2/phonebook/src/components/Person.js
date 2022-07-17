@@ -1,8 +1,12 @@
 import React from "react";
 
 
-const Person = ({ person }) => (
-    <div>{person.name}, {person.number}</div>
+const Person = ({ person, deleteEntry }) => (
+    <div>
+        {person.name},
+        {person.number}
+        <button onClick={deleteEntry}>Delete</button>
+    </div>
 )
 
 

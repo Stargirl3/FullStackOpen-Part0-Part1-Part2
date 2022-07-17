@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
@@ -24,7 +23,7 @@ const App = () => {
       .then(initialPersons => {
         console.log('promise fulfilled')
         setPersons(initialPersons)
-      })  
+      })
   }, [])
 
 
@@ -48,10 +47,11 @@ const App = () => {
         .create(personObject)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+          console.log(`After POST there are ${persons.length} people in the phonebook`);
         })
     }
-    setNewName('')
-    setNewNumber('')
   }
 
 
@@ -78,8 +78,26 @@ const App = () => {
       else return false
     })
 
-  
-  //console.log(persons);
+  /* gets triggered when a user clicks the 'delete' button visible afetr each phonebook entry. First it locates the entry clicked, opens a window to confirm if the entry should be deleted and once confirmed, deletes the entry and renders the updated phonebook, both using axios*/
+  const deleteEntryOf = (id) => {
+    const person = persons.find(p =>
+      p.id == id
+    )
+
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .deleteEntry(person, { id })
+
+      personService
+        .getAll()
+        .then(initialPersons => {
+          const updatedPersons = initialPersons.map(person => person)
+          setPersons(updatedPersons)
+          console.log(`After DELETE there are ${updatedPersons.length} people in the phonebook`);
+
+        })
+    }
+  }
 
 
   return (
@@ -100,7 +118,7 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons={personsToShow} />
+      <Persons persons={personsToShow} deleteEntryOf={deleteEntryOf} />
     </>
   )
 }
