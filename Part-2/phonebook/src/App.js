@@ -3,8 +3,10 @@ import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import personService from './services/persons'
-import Notification from './components/Notification'
-//import axios from 'axios'
+import SuccessNotification from './components/SuccessNotification'
+import ErrorNotification from './components/ErrorNotification'
+
+
 
 
 const App = () => {
@@ -15,7 +17,8 @@ const App = () => {
   const [stringToFind, setStringToFind] = useState('')
   const [showAll, setShowAll] = useState(true)
   const [successMessage, setSuccessMessage] = useState(null)
-
+  const [errorMessage, setErrorMessage] = useState(null)
+  
 
 
   /*fetch data from json-server using the 'axios' library and 'useEffect' hook*/
@@ -31,7 +34,7 @@ const App = () => {
 
 
 
-  /* checks if the new name and that number already exist in the phonebook and if they do it alert the user. If the name exists but the number is different, it asks the user if they'd like to replace the old number and if they agree it uses axios PUT to update the user. Else, if both name and number are new, a new contact gets added to the phonebook*/
+  /* checks if the new name and that number already exist in the phonebook and if they do it alert the user. If the name exists but the number is different, it asks the user if they'd like to replace the old number and if they agree, it uses axios PUT to update the user. Else, if both name and number are new, a new contact gets added to the phonebook*/
   const addPerson = (event) => {
     event.preventDefault()
     const nameExists = (person) => person.name === newName
@@ -56,11 +59,18 @@ const App = () => {
           setTimeout(() => {
             setSuccessMessage(null)
           }, 5000)
-
-
           return setPersons(persons.map(person => person.name !== newName
             ? person
             : returnedPerson))
+        })
+        .catch(error => {
+          setErrorMessage(
+            `Unable to complete update of ${changedPerson.name}, because his details were previously deleted from the server`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+          setPersons(persons.filter(person => person.name !== changedPerson.name))
         })
     }
 
@@ -86,8 +96,10 @@ const App = () => {
   const handleNameChange = (event) => setNewName(event.target.value)
 
 
+
   //sets new number
   const handleNumberChange = (event) => setNewNumber(event.target.value)
+
 
 
   /* sets the string being typed, as 'stringToFind', after it converts it to lowercase. If the search box is empty it sets 'showAll' as TRUE. Otherwise, if someone is currently searching for a name, it sets it as FALSE*/
@@ -97,6 +109,8 @@ const App = () => {
     else setShowAll(false)
   }
 
+
+
   /*If showAll === TRUE it shows the entire phonebook, otherwise it shows a new array that only contains contacts whose name contains the string being currently searched */
   const personsToShow = showAll
     ? persons
@@ -104,6 +118,8 @@ const App = () => {
       if (person.name.toLowerCase().indexOf(stringToFind) !== -1) return true
       else return false
     })
+
+
 
   /* gets triggered when a user clicks the 'delete' button visible afetr each phonebook entry. First it locates the entry clicked, opens a window to confirm if the entry should be deleted and once confirmed, deletes the entry and renders the updated phonebook, both using axios*/
   const deleteEntryOf = (id) => {
@@ -119,16 +135,18 @@ const App = () => {
           setPersons(initialPersons.filter(p => p.id !== id))
           console.log('success')
         })
-  
     }
   }
+
 
 
   return (
     <>
       <h2>Phonebook</h2>
 
-      <Notification message={successMessage}/>
+      <SuccessNotification message={successMessage} />
+
+      <ErrorNotification message={errorMessage} />
 
       <Filter handleSearchChange={handleSearchChange} />
 
