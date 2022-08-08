@@ -3,16 +3,18 @@ import Filter from './components/Filter'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import personService from './services/persons'
-import axios from 'axios'
+import Notification from './components/Notification'
+//import axios from 'axios'
 
 
 const App = () => {
 
-  const [persons, setPersons] = useState([])
+  const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [stringToFind, setStringToFind] = useState('')
   const [showAll, setShowAll] = useState(true)
+  const [successMessage, setSuccessMessage] = useState(null)
 
 
 
@@ -48,12 +50,20 @@ const App = () => {
       personService
         .update(changedPerson.id, changedPerson)
         .then(returnedPerson => {
-          setPersons(persons.map(person => 
-            person.name !== newName 
-            ? person 
+          setSuccessMessage(
+            `${newName}'s number was successfully updated`
+          )
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)
+
+
+          return setPersons(persons.map(person => person.name !== newName
+            ? person
             : returnedPerson))
         })
     }
+
     else {
       const personObject = {
         name: newName,
@@ -67,7 +77,6 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
-          console.log(`After POST there are ${persons.length} people in the phonebook`);
         })
     }
   }
@@ -98,7 +107,7 @@ const App = () => {
 
   /* gets triggered when a user clicks the 'delete' button visible afetr each phonebook entry. First it locates the entry clicked, opens a window to confirm if the entry should be deleted and once confirmed, deletes the entry and renders the updated phonebook, both using axios*/
   const deleteEntryOf = (id) => {
-    const person = persons.find(p => p.id == id)
+    const person = persons.find(p => p.id === id)
 
     if (window.confirm(`Delete ${person.name}?`)) {
       personService
@@ -110,6 +119,7 @@ const App = () => {
           setPersons(initialPersons.filter(p => p.id !== id))
           console.log('success')
         })
+  
     }
   }
 
@@ -117,6 +127,8 @@ const App = () => {
   return (
     <>
       <h2>Phonebook</h2>
+
+      <Notification message={successMessage}/>
 
       <Filter handleSearchChange={handleSearchChange} />
 
