@@ -1,4 +1,4 @@
 # FullStackOpen 2021
-All of my solved exercises
-for https://fullstackopen.com/en/
+My solved exercises for Part 0 / Part 1 / Part 2
+of https://fullstackopen.com/en/
 by Anna-Chrysa Rutter
